@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% set full_ok = r.verdict_ok and r.action_ok and not r.missing_pivots %}
+{% if timed_out %}
+<div class="verdict-banner fail">⏱ Time expired — in a real queue this alert just aged out. Score: 0</div>
+{% elif r.critical_miss %}
+<div class="verdict-banner fail">✖ CRITICAL MISS — malicious activity was not escalated. This is the one error an L1 cannot afford.</div>
+{% elif full_ok %}
+<div class="verdict-banner ok">✔ Clean triage — correct verdict, correct action, evidence checked. +{{ "%.0f"|format(r.score) }} pts</div>
+{% elif r.verdict_ok and r.action_ok %}
+<div class="verdict-banner partial">◑ Right call, weak process — see pivot feedback below. +{{ "%.0f"|format(r.score) }} pts</div>
+{% else %}
+<div class="verdict-banner fail">✖ Incorrect triage. +{{ "%.0f"|format(r.score) }} pts</div>
+{% endif %}
+
+<div class="panel">
+  <div class="panel-title">Your call vs correct call <span class="mitre-tag">{{ sc.mitre }}</span></div>
+  <table class="cmp">
+    <tr><th></th><th>Yours</th><th>Correct</th></tr>
+    <tr>
+      <td>Event type</td>
+      <td class="{{ 'good' if r.type_ok else 'bad-t' }}">{{ your.event_type or '—' }}</td>
+      <td>{{ sc.event_type }}</td>
+    </tr>
+    <tr>
+      <td>Verdict</td>
+      <td class="{{ 'good' if r.verdict_ok else 'bad-t' }}">{{ verdicts.get(your.verdict, '—') }}</td>
+      <td>{{ verdicts[sc.verdict] }}</td>
+    </tr>
+    <tr>
+      <td>Action</td>
+      <td class="{{ 'good' if r.action_ok else 'bad-t' }}">{{ actions.get(your.action, '—') }}</td>
+      <td>{{ actions[sc.action] }}</td>
+    </tr>
+  </table>
+</div>
+
+{% if r.missing_pivots or r.extra_pivots %}
+<div class="panel">
+  <div class="panel-title">Investigation feedback</div>
+  <div class="panel-body">
+    {% if r.missing_pivots %}
+      <p class="warn-t">Not checked (required to justify this verdict):
+      {% for p in r.missing_pivots %}<b>{{ pivot_labels[p] }}</b>{{ ", " if not loop.last }}{% endfor %}</p>
+    {% endif %}
+    {% if r.extra_pivots %}
+      <p class="hint">Pulled but not needed: {% for p in r.extra_pivots %}{{ pivot_labels[p] }}{{ ", " if not loop.last }}{% endfor %} — minor queue-time cost.</p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<div class="panel">
+  <div class="panel-title">What to check on this pattern</div>
+  <div class="panel-body">{{ sc.what_to_check }}</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Debrief</div>
+  <div class="panel-body">{{ sc.explanation }}</div>
+</div>
+
+<div class="panel">
+  <div class="panel-body">
+    <a class="btn" href="/session/{{ sess.id }}/next" style="text-decoration:none; display:inline-block;">Next alert →</a>
+    <span class="progress-txt" style="margin-left:14px;">{{ sess.done }} / {{ sess.size }} · session score {{ "%.0f"|format(sess.score) }}</span>
+  </div>
+</div>
+{% endblock %}

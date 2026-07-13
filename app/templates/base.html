@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}SOC L1 Drill{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">&gt;_</span> soc<span class="accent">drill</span></div>
+  <nav>
+    <a href="/">Dashboard</a>
+    <a href="/reference">Reference</a>
+    <a href="/study">Study</a>
+    <a href="/stats">Statistics</a>
+  </nav>
+  <div class="topbar-right">L1 Triage Trainer</div>
+</header>
+<main class="wrap">
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

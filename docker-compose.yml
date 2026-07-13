@@ -1,0 +1,12 @@
+services:
+  drill:
+    build: .
+    ports:
+      - "${HOST_PORT:-8000}:8000"
+    environment:
+      - DB_PATH=/data/drill.db
+      - VARIANTS_PER_TEMPLATE=20   # 93 templates x 20 = 1860 scenarios
+    volumes:
+      - drill-data:/data
+volumes:
+  drill-data:

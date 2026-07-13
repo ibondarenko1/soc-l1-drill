@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="tiles">
+  <div class="tile"><div class="big">{{ s.today[0] }}</div><div class="label">Alerts triaged today</div></div>
+  <div class="tile"><div class="big">{{ "%.0f"|format(s.overall[0]) }}%</div><div class="label">Verdict accuracy</div></div>
+  <div class="tile"><div class="big">{{ "%.0f"|format(s.overall[1]) }}%</div><div class="label">Action accuracy</div></div>
+  <div class="tile"><div class="big {{ 'bad' if s.critical_misses > 0 else '' }}">{{ s.critical_misses }}</div><div class="label">Critical misses (malicious → closed)</div></div>
+  <div class="tile"><div class="big">{{ "%.0f"|format(s.overall[3]) }}s</div><div class="label">Avg time per alert</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">New here?</div>
+  <div class="panel-body hint">
+    Read the <a href="/reference">Reference</a> once (the EventIDs, logon types and LOLBin tells you must know),
+    then run <a href="/study">Study mode</a> — no timer, all pivots open, answer hidden until you decide —
+    until the fields read as words. Only then do the timed drills below for speed.
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">New triage session</div>
+  <div class="panel-body">
+    <form class="session-form" method="post" action="/session/start">
+      <label>Queue size
+        <select name="size">
+          <option value="10">10 alerts</option>
+          <option value="20" selected>20 alerts</option>
+          <option value="50">50 alerts</option>
+          <option value="100">100 alerts</option>
+        </select>
+      </label>
+      <button class="btn" type="submit">Start triage</button>
+      <span class="hint">3:00 per alert. Timed-out alerts score 0. Missed scenarios return more often.</span>
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">How scoring works</div>
+  <div class="panel-body hint">
+    Verdict 50 pts · Action 30 pts · Event classification 10 pts · Evidence bonus +10 (all required pivots checked).
+    Correct verdict <b>without</b> checking the evidence: −15 (a guess is not triage).
+    Excess pivots: −3 each (the queue is waiting). Malicious alert closed = critical miss, resurfaces aggressively.
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <div class="panel-title">Session complete</div>
+  <div class="panel-body">
+    <div class="tiles">
+      <div class="tile"><div class="big">{{ sess.done }}</div><div class="label">Alerts triaged</div></div>
+      <div class="tile"><div class="big">{{ "%.0f"|format(sess.score) }}</div><div class="label">Session score</div></div>
+      <div class="tile"><div class="big">{{ "%.0f"|format(sess.score / sess.done if sess.done else 0) }}</div><div class="label">Avg per alert (max 100)</div></div>
+    </div>
+    <a class="btn" href="/" style="text-decoration:none; display:inline-block;">Dashboard</a>
+    <a class="btn secondary" href="/stats" style="text-decoration:none; display:inline-block; margin-left:10px;">Statistics</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Alert {{ progress }}/{{ sess.size }} — SOC L1 Drill{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <div class="panel-title">
+    <span>Alert queue — {{ progress }} of {{ sess.size }}</span>
+    <span class="timer" id="timer">3:00</span>
+  </div>
+  <div class="meta-row">
+    <span>Source: <b>{{ sc.source }}</b></span>
+    <span>Alert ID: <b>#{{ sc.id }}</b></span>
+    <span>Status: <b>New</b></span>
+  </div>
+  <div class="panel-body">
+    <div class="event">{{ sc.alert }}</div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Investigate <span class="hint">each pivot costs queue time — pull only what you need</span></div>
+  <div class="pivot-btns">
+    {% for key, label in pivot_labels.items() %}
+    <button type="button" class="pivot" data-pivot="{{ key }}" onclick="openPivot('{{ key }}')">{{ label }}</button>
+    {% endfor %}
+  </div>
+  {% for key, content in pivots.items() %}
+  <div class="pivot-result" id="pivot-{{ key }}">
+    <div class="event sev-info">{{ content }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<form class="panel" method="post" id="answerForm"
+      action="/session/{{ sess.id }}/answer/{{ sc.id }}">
+  <div class="panel-title">Decision</div>
+
+  <div class="q-block">
+    <div class="q-label">1 · What is this event?</div>
+    <div class="choices">
+      {% for opt in type_options %}
+      <label><input type="radio" name="event_type" value="{{ opt }}" required><span>{{ opt }}</span></label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label">2 · Verdict</div>
+    <div class="choices row">
+      {% for val, label in verdicts.items() %}
+      <label><input type="radio" name="verdict" value="{{ val }}" required><span>{{ label }}</span></label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label">3 · Action</div>
+    <div class="choices row">
+      {% for val, label in actions.items() %}
+      <label><input type="radio" name="action" value="{{ val }}" required><span>{{ label }}</span></label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="q-block">
+    <input type="hidden" name="pivots_used" id="pivotsUsed" value="">
+    <input type="hidden" name="time_taken" id="timeTaken" value="0">
+    <input type="hidden" name="timed_out" id="timedOut" value="0">
+    <button class="btn" type="submit">Submit decision</button>
+  </div>
+</form>
+
+<script>
+const used = new Set();
+function openPivot(k) {
+  used.add(k);
+  document.getElementById('pivot-' + k).classList.add('show');
+  document.querySelector('[data-pivot="' + k + '"]').classList.add('open');
+  document.getElementById('pivotsUsed').value = Array.from(used).join(',');
+}
+const t0 = Date.now();
+let remaining = {{ timer }};
+const timerEl = document.getElementById('timer');
+const iv = setInterval(() => {
+  remaining--;
+  const m = Math.floor(remaining / 60), s = remaining % 60;
+  timerEl.textContent = m + ':' + String(s).padStart(2, '0');
+  if (remaining <= 60) timerEl.classList.add('warn');
+  if (remaining <= 20) timerEl.classList.add('bad');
+  if (remaining <= 0) {
+    clearInterval(iv);
+    document.getElementById('timedOut').value = '1';
+    // relax required so the form can auto-submit empty
+    document.querySelectorAll('#answerForm input[required]').forEach(i => i.required = false);
+    submitForm();
+  }
+}, 1000);
+function submitForm() {
+  document.getElementById('timeTaken').value = ((Date.now() - t0) / 1000).toFixed(1);
+  document.getElementById('answerForm').submit();
+}
+document.getElementById('answerForm').addEventListener('submit', e => {
+  clearInterval(iv);
+  document.getElementById('timeTaken').value = ((Date.now() - t0) / 1000).toFixed(1);
+});
+</script>
+{% endblock %}

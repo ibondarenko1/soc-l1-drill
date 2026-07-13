@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Study mode — SOC L1 Drill{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <div class="panel-title">
+    <span>Study mode — no timer, no scoring</span>
+    <span class="hint">learn the fields first, drill for speed later</span>
+  </div>
+  <div class="meta-row">
+    <span>Source: <b>{{ sc.source }}</b></span>
+    <span>Alert ID: <b>#{{ sc.id }}</b></span>
+    <span><span class="mitre-tag">{{ sc.mitre }}</span></span>
+  </div>
+  <div class="panel-body">
+    <div class="event">{{ sc.alert }}</div>
+  </div>
+</div>
+
+{% if notes %}
+<div class="panel">
+  <div class="panel-title">What these fields mean</div>
+  <table class="cmp">
+    {% for n in notes %}
+    <tr><th style="width:30%; vertical-align:top;">{{ n.title }}</th><td>{{ n.expl }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+<div class="panel">
+  <div class="panel-title">Investigation context — all pivots open</div>
+  {% for key, content in pivots.items() %}
+  <div class="q-block">
+    <div class="q-label">{{ pivot_labels[key] }}
+      {% if key in required %}<span class="warn-t">· required for this verdict</span>{% endif %}
+    </div>
+    <div class="event sev-info">{{ content }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="panel">
+  <div class="panel-title">Before revealing — decide for yourself</div>
+  <div class="panel-body">
+    <p class="hint">Event type? Verdict (FP / benign / malicious)? Close or escalate? Say it out loud, then reveal.</p>
+    <button class="btn" type="button" onclick="document.getElementById('reveal').style.display='block'; this.style.display='none';">Reveal answer</button>
+  </div>
+</div>
+
+<div id="reveal" style="display:none">
+  <div class="panel">
+    <div class="panel-title">Answer</div>
+    <table class="cmp">
+      <tr><th>Event type</th><td>{{ sc.event_type }}</td></tr>
+      <tr><th>Verdict</th><td class="{{ 'bad-t' if sc.verdict == 'malicious' else 'good' }}">{{ verdicts[sc.verdict] }}</td></tr>
+      <tr><th>Action</th><td>{{ actions[sc.action] }}</td></tr>
+    </table>
+  </div>
+  <div class="panel">
+    <div class="panel-title">What to check on this pattern</div>
+    <div class="panel-body">{{ sc.what_to_check }}</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Debrief</div>
+    <div class="panel-body">{{ sc.explanation }}</div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-body">
+    <a class="btn" href="/study" style="text-decoration:none; display:inline-block;">Next scenario →</a>
+    <a class="btn secondary" href="/study?source={{ sc.source | urlencode }}" style="text-decoration:none; display:inline-block; margin-left:10px;">More from {{ sc.source }}</a>
+    <a class="btn secondary" href="/reference" style="text-decoration:none; display:inline-block; margin-left:10px;">Reference</a>
+  </div>
+</div>
+{% endblock %}

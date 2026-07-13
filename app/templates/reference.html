@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Reference — SOC L1 Drill{% endblock %}
+{% block content %}
+
+<div class="panel">
+  <div class="panel-title">L1 field reference</div>
+  <div class="panel-body hint">
+    The entities you must recognize on sight before drilling makes sense.
+    Read this once, then let study mode reinforce them in context.
+  </div>
+</div>
+
+{% for sec in sections %}
+<div class="panel">
+  <div class="panel-title">{{ sec.section }}</div>
+  <table class="cmp">
+    {% for item in sec['items'] %}
+    <tr><th style="width:32%; vertical-align:top;">{{ item.title }}</th><td>{{ item.expl }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endfor %}
+
+<div class="panel">
+  <div class="panel-body">
+    <a class="btn" href="/study" style="text-decoration:none; display:inline-block;">Study mode →</a>
+  </div>
+</div>
+{% endblock %}

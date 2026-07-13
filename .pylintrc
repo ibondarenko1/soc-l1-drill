@@ -1,0 +1,30 @@
+[MAIN]
+# seed_data.py is a scenario-content module: long alert/debrief strings are data,
+# not code smell. Keep pylint focused on real errors, not formatting of content.
+
+[FORMAT]
+max-line-length = 1000
+
+[MESSAGES CONTROL]
+# Disabled for a small, data-heavy FastAPI app:
+#  - docstring rules: routes and helpers are self-descriptive
+#  - line/module length: driven by scenario content in seed_data.py
+#  - argument/local counts: FastAPI form handlers take many Form() params
+#  - import-outside-toplevel: intentional, to keep seed import lazy in db.init
+#  - cell-var-from-loop: the closure is invoked synchronously in-iteration
+disable =
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    line-too-long,
+    too-many-lines,
+    too-many-arguments,
+    too-many-positional-arguments,
+    too-many-locals,
+    too-many-branches,
+    too-many-statements,
+    import-outside-toplevel,
+    unused-variable,
+    cell-var-from-loop,
+    invalid-name,
+    redefined-outer-name

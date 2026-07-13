@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Statistics — SOC L1 Drill{% endblock %}
+{% block content %}
+
+<div class="tiles">
+  <div class="tile"><div class="big">{{ s.total_attempts }}</div><div class="label">Total alerts triaged</div></div>
+  <div class="tile"><div class="big">{{ "%.0f"|format(s.overall[0]) }}%</div><div class="label">Verdict accuracy</div></div>
+  <div class="tile"><div class="big">{{ "%.0f"|format(s.overall[2]) }}</div><div class="label">Avg score</div></div>
+  <div class="tile"><div class="big {{ 'bad' if s.critical_misses else '' }}">{{ s.critical_misses }}</div><div class="label">Critical misses</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Accuracy by telemetry source</div>
+  <table class="data">
+    <tr><th>Source</th><th>Triaged</th><th>Verdict acc.</th><th></th><th>Action acc.</th><th>Avg time</th></tr>
+    {% for row in s.by_source %}
+    {% set acc = row[2] or 0 %}
+    <tr>
+      <td>{{ row[0] }}</td><td>{{ row[1] }}</td>
+      <td>{{ "%.0f"|format(acc) }}%</td>
+      <td><div class="bar {{ 'low' if acc < 60 else ('mid' if acc < 85 else '') }}"><i style="width: {{ acc }}%"></i></div></td>
+      <td>{{ "%.0f"|format(row[3] or 0) }}%</td>
+      <td>{{ "%.0f"|format(row[4] or 0) }}s</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Weakest ATT&amp;CK techniques</div>
+  <table class="data">
+    <tr><th>Technique</th><th>Attempts</th><th>Verdict acc.</th><th></th></tr>
+    {% for row in s.by_mitre %}
+    {% set acc = row[2] or 0 %}
+    <tr>
+      <td><span class="mitre-tag">{{ row[0] }}</span></td><td>{{ row[1] }}</td>
+      <td>{{ "%.0f"|format(acc) }}%</td>
+      <td><div class="bar {{ 'low' if acc < 60 else ('mid' if acc < 85 else '') }}"><i style="width: {{ acc }}%"></i></div></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Daily trend (last 14 days)</div>
+  <table class="data">
+    <tr><th>Date</th><th>Alerts</th><th>Verdict acc.</th><th>Avg score</th></tr>
+    {% for row in s.daily %}
+    <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td><td>{{ "%.0f"|format(row[2] or 0) }}%</td><td>{{ "%.0f"|format(row[3] or 0) }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Scenarios that keep beating you (highest SRS weight)</div>
+  <table class="data">
+    <tr><th>Pattern</th><th>Source</th><th>Wrong</th><th>Resurface weight</th></tr>
+    {% for row in s.weakest %}
+    <tr><td>{{ row[1] }}</td><td>{{ row[2] }}</td><td class="bad-t">{{ row[3] }}</td><td>{{ "%.1f"|format(row[4]) }}×</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
