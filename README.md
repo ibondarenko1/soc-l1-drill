@@ -6,6 +6,16 @@ mini-investigation, not a flashcard: read the alert, pull only the pivots you ne
 close or escalate  then get an immediate debrief with the reasoning and the
 MITRE ATT&CK technique.
 
+![Alert triage board](docs/img/board.png)
+
+*A live alert card: pull only the pivots you need, classify the event, then
+decide verdict and action against a 3:00 clock.*
+
+![Debrief](docs/img/debrief.png)
+
+*The debrief after each call: your answer against the correct one, the MITRE
+ATT&CK technique, what to check on this pattern, and the reasoning.*
+
 ## Content
 - 93 scenario templates × 20 rendered variants = **1,860 scenarios** (usernames, IPs,
   hosts, timestamps randomized so you learn the pattern, not the card)
