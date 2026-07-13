@@ -3,7 +3,7 @@
 Alert-triage trainer for SOC Tier 1 skills. Splunk-style dark UI. Each card is a
 mini-investigation, not a flashcard: read the alert, pull only the pivots you need
 (related events, asset, identity, reputation), decide FP / benign / malicious,
-close or escalate — then get an immediate debrief with the reasoning and the
+close or escalate  then get an immediate debrief with the reasoning and the
 MITRE ATT&CK technique.
 
 ## Content
@@ -12,7 +12,7 @@ MITRE ATT&CK technique.
 - Sources: Windows Security, PowerShell 4104, Sysmon, Microsoft Defender, Microsoft Sentinel
 - Deliberate FP/TP pairs of the *same alert type* (quarantine that worked vs quarantine
   that fired after execution; impossible travel vs SWG egress artifact; LSASS access
-  by Mimikatz vs by MsMpEng) — the pivots are what separate them
+  by Mimikatz vs by MsMpEng)  the pivots are what separate them
 
 ## Mechanics
 - 3:00 timer per alert; timeout = 0 points
