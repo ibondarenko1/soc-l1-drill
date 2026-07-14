@@ -1,4 +1,4 @@
-///////# SOC L1 Drill
+////////# SOC L1 Drill
 
 Alert-triage trainer for SOC Tier 1 skills. Splunk-style dark UI. Each card is a
 mini-investigation, not a flashcard: read the alert, pull only the pivots you need
